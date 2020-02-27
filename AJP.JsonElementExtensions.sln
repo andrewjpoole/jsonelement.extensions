@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29814.53
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AJP.JsonElementExtensions", "src\AJP.JsonElementExtensions\AJP.JsonElementExtensions.csproj", "{F7AAC0C2-BBF0-413E-AC60-083C0D2A7B04}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AJP.JsonElementExtensions.Tests", "tests\AJP.JsonElementExtensions.Tests\AJP.JsonElementExtensions.Tests.csproj", "{E00E1546-8B29-4ADC-A58C-7E4FA82E1459}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F7AAC0C2-BBF0-413E-AC60-083C0D2A7B04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7AAC0C2-BBF0-413E-AC60-083C0D2A7B04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7AAC0C2-BBF0-413E-AC60-083C0D2A7B04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7AAC0C2-BBF0-413E-AC60-083C0D2A7B04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E00E1546-8B29-4ADC-A58C-7E4FA82E1459}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E00E1546-8B29-4ADC-A58C-7E4FA82E1459}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E00E1546-8B29-4ADC-A58C-7E4FA82E1459}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E00E1546-8B29-4ADC-A58C-7E4FA82E1459}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {00FD8726-58BE-442A-A662-FDB3CFD722A0}
+	EndGlobalSection
+EndGlobal

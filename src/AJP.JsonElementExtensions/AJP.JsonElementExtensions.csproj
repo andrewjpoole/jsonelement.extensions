@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>AJP</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Authors>Andrew Poole</Authors>
+    <Description>Some extension methods for adding effectively properties dynamically to a JsonElement, it actually recreates a new JsonElement from the original plus the new property.</Description>
+    <Copyright>2020 andrew poole</Copyright>
+    <RepositoryUrl>https://github.com/andrewjpoole/jsonelement.extensions</RepositoryUrl>
+    <PackageTags>JsonElement dynamic System.Text.Json AddProperty</PackageTags>
+    <PackageReleaseNotes>1.0.0) initial version</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="4.7.1" />
+  </ItemGroup>
+
+</Project>
