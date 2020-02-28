@@ -16,6 +16,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>C:\Dev\Git\jsonelement.extensions\src\AJP.JsonElementExtensions\AJP.JsonElementExtensions.xml</DocumentationFile>
+    <NoWarn>1701;1702;1573</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

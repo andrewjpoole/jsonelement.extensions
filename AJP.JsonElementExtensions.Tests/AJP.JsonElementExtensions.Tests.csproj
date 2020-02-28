@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AJP.JsonElementExtensions\AJP.JsonElementExtensions.csproj" />
+    <ProjectReference Include="..\AJP.JsonElementExtensions\AJP.JsonElementExtensions.csproj" />
   </ItemGroup>
 
 </Project>

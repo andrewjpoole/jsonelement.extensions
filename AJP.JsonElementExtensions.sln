@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29814.53
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AJP.JsonElementExtensions", "src\AJP.JsonElementExtensions\AJP.JsonElementExtensions.csproj", "{F7AAC0C2-BBF0-413E-AC60-083C0D2A7B04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AJP.JsonElementExtensions", "AJP.JsonElementExtensions\AJP.JsonElementExtensions.csproj", "{516225B7-5D81-4641-83A2-9010A4C15780}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AJP.JsonElementExtensions.Tests", "tests\AJP.JsonElementExtensions.Tests\AJP.JsonElementExtensions.Tests.csproj", "{E00E1546-8B29-4ADC-A58C-7E4FA82E1459}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AJP.JsonElementExtensions.Tests", "AJP.JsonElementExtensions.Tests\AJP.JsonElementExtensions.Tests.csproj", "{6EBFABA8-1BC0-4CAF-9161-A32192557463}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F7AAC0C2-BBF0-413E-AC60-083C0D2A7B04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7AAC0C2-BBF0-413E-AC60-083C0D2A7B04}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7AAC0C2-BBF0-413E-AC60-083C0D2A7B04}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7AAC0C2-BBF0-413E-AC60-083C0D2A7B04}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E00E1546-8B29-4ADC-A58C-7E4FA82E1459}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E00E1546-8B29-4ADC-A58C-7E4FA82E1459}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E00E1546-8B29-4ADC-A58C-7E4FA82E1459}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E00E1546-8B29-4ADC-A58C-7E4FA82E1459}.Release|Any CPU.Build.0 = Release|Any CPU
+		{516225B7-5D81-4641-83A2-9010A4C15780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{516225B7-5D81-4641-83A2-9010A4C15780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{516225B7-5D81-4641-83A2-9010A4C15780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{516225B7-5D81-4641-83A2-9010A4C15780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EBFABA8-1BC0-4CAF-9161-A32192557463}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EBFABA8-1BC0-4CAF-9161-A32192557463}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EBFABA8-1BC0-4CAF-9161-A32192557463}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EBFABA8-1BC0-4CAF-9161-A32192557463}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -12,9 +12,9 @@ namespace AJP
 	/// Methods which allow the addition or removal of properties on a JsonElement.
 	/// JsonElement is immutable, so these methods work by enumerating the existing properties and writing them into a new jsonstring in memory.
 	/// Additional properties can be added and existing properties can be removed and the resulting string is parsed into a new JsonElement which is returned.
-	/// Please note this roundtrip process happens for every call, so if lots of changes are needed or performance is critical, 
-	/// please use ParseAsJsonStringAndMutate() so that all changes can be done together, with only one roudtrip process.
-	/// A new JsonElement is returned, the original is unchanged.	/// 
+	/// Please note this roundtrip process happens for every call, so if lots of changes are needed, please consider/test using ParseAsJsonStringAndMutate() 
+	/// so that all changes can be done together, with only one roudtrip process.
+	/// A new JsonElement is returned, the original is unchanged.
 	/// </summary>
 	public static class JsonElementExtensions
 	{
@@ -72,7 +72,6 @@ namespace AJP
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
 		/// </summary>
 		/// <param name="name">A string containing the name of the property to add</param>
-		/// <param name="value">The value of the property to add</param>
 		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
 		public static JsonElement AddNullProperty(this JsonElement jElement, string name)
 		{
@@ -81,8 +80,7 @@ namespace AJP
 		/// <summary>
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
 		/// </summary>
-		/// <param name="name">A string containing the name of the property to add</param>
-		/// <param name="value">The value of the property to add</param>
+		/// <param name="property">The property to add</param>
 		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
 		public static JsonElement AddProperty(this JsonElement jElement, JsonProperty property)
 		{
@@ -155,7 +153,7 @@ namespace AJP
 		/// <summary>
 		/// Method which recreates a new JsonElement from an existing one, but without one of the exiting properties
 		/// </summary>
-		/// <param name="name">A string containing the name of the property to remove</param>
+		/// <param name="nameOfPropertyToRemove">A string containing the name of the property to remove</param>
 		/// <returns>A new JsonElement containing the old properties apart from the named property to remove</returns>
 		public static JsonElement RemoveProperty(this JsonElement jElement, string nameOfPropertyToRemove)
 		{
@@ -179,8 +177,9 @@ namespace AJP
 		/// <summary>
 		/// Method which recreates a new JsonElement from an existing one, with the opportunity to add new and remove existing properties
 		/// </summary>
-		/// <param name="mutate">An Action of Utf8JsonWriter, which allows the calling code to write additional properties, its possible to add highly complex nested structures</param>
-		/// <param name="namesOfPropertiesToRemove">A list of names of the existing properties to remove from the resulting JsonElement</param>
+		/// <param name="mutate">An Action of Utf8JsonWriter and List of strings. 
+		/// The Utf8JsonWriter allows the calling code to write additional properties, its possible to add highly complex nested structures,
+		/// the list of strings is a list names of any existing properties to be removed from the resulting JsonElement</param>
 		/// <returns>A new JsonElement</returns>
 		public static JsonElement ParseAsJsonStringAndMutate(this JsonElement jElement, Action<Utf8JsonWriter, List<string>> mutate)
 		{
