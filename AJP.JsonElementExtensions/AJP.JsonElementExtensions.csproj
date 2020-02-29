@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>AJP</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -11,7 +11,12 @@
     <Copyright>2020 andrew poole</Copyright>
     <RepositoryUrl>https://github.com/andrewjpoole/jsonelement.extensions</RepositoryUrl>
     <PackageTags>JsonElement dynamic System.Text.Json AddProperty</PackageTags>
-    <PackageReleaseNotes>1.0.0) initial version</PackageReleaseNotes>
+    <PackageReleaseNotes>1.1.0) changed target framework to netstandard2.0
+1.0.0) initial version</PackageReleaseNotes>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <Version>1.1.0</Version>
+    <RepositoryType>github</RepositoryType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

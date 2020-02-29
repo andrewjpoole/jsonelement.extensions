@@ -106,10 +106,10 @@ namespace AJP
 			});
 		}
 		/// <summary>
-		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
+		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way. 
 		/// </summary>
 		/// <param name="name">A string containing the name of the property to add</param>
-		/// <param name="value">The value of the property to add</param>
+		/// <param name="value">The value of the property to add, only simple objects are supported.</param>
 		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
 		public static JsonElement AddProperty(this JsonElement jElement, string name, object value)
 		{
@@ -209,6 +209,7 @@ namespace AJP
 				return JsonDocument.Parse(resultJson).RootElement;
 			}
 		}
+		
 		/// <summary>
 		/// Method which returns a list of property name and value, from a given object
 		/// </summary>

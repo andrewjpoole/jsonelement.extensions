@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 
-namespace AJP.JsonElementExtensions.Tests
+namespace AJP.JsonElementExtensions.UnitTests
 {
 	[TestFixture]
     public class JsonElementExtensionsTests
@@ -55,7 +55,7 @@ namespace AJP.JsonElementExtensions.Tests
 
 			Assert.That(jElement.GetProperty("IsAdmin").ToString(), Is.EqualTo(true.ToString()));
 			Assert.Throws<KeyNotFoundException>(() => jElement.GetProperty("EmailAddress"));
-		}
+		}		
 
 		[Test]
 		public void RemoveProperty_methods_should_remove_properties_from_the_output()
