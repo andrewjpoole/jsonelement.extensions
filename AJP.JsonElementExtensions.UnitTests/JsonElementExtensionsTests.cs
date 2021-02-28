@@ -82,5 +82,18 @@ namespace AJP.JsonElementExtensions.UnitTests
 			Assert.Throws<KeyNotFoundException>(() => jElement.GetProperty("EmailAddress"));
 			Assert.Throws<KeyNotFoundException>(() => jElement.GetProperty("Age"));
 		}
+
+        [Test] public void AddProperty_method_should_handle_primitive_style_objects_cast_as_objects()
+        {
+            // get a JsonElement to start with...
+            var jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"andrewjpoole@gmail.com\", \"Age\": 38 }";
+            var jElement = JsonDocument.Parse(jsonString).RootElement;
+
+            var stringCastToObject = (object) "3jk4h5gkj3hg45kjh4g5";
+			
+            jElement = jElement.AddProperty("Id", stringCastToObject);
+
+			Assert.That(jElement.GetProperty("Id").ToString(), Is.EqualTo("3jk4h5gkj3hg45kjh4g5"));
+		}
 	}
 }

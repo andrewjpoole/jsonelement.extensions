@@ -18,138 +18,101 @@ namespace AJP
 	/// </summary>
 	public static class JsonElementExtensions
 	{
-		/// <summary>
-		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
-		/// </summary>
-		/// <param name="name">A string containing the name of the property to add</param>
-		/// <param name="value">The value of the property to add</param>
-		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddProperty(this JsonElement jElement, string name, string value)
-		{
-			return jElement.ParseAsJsonStringAndMutate((utf8JsonWriter1, namesOfPropertiesToRemove) => utf8JsonWriter1.WriteString(name, value));
-		}
-		/// <summary>
-		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
-		/// </summary>
-		/// <param name="name">A string containing the name of the property to add</param>
-		/// <param name="value">The value of the property to add</param>
-		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddProperty(this JsonElement jElement, string name, int value)
-		{
-			return jElement.ParseAsJsonStringAndMutate((utf8JsonWriter1, namesOfPropertiesToRemove) => utf8JsonWriter1.WriteNumber(name, value));
-		}
-		/// <summary>
-		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
-		/// </summary>
-		/// <param name="name">A string containing the name of the property to add</param>
-		/// <param name="value">The value of the property to add</param>
-		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddProperty(this JsonElement jElement, string name, double value)
-		{
-			return jElement.ParseAsJsonStringAndMutate((utf8JsonWriter1, namesOfPropertiesToRemove) => utf8JsonWriter1.WriteNumber(name, value));
-		}
-		/// <summary>
-		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
-		/// </summary>
-		/// <param name="name">A string containing the name of the property to add</param>
-		/// <param name="value">The value of the property to add</param>
-		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddProperty(this JsonElement jElement, string name, DateTime value)
-		{
-			return jElement.ParseAsJsonStringAndMutate((utf8JsonWriter1, namesOfPropertiesToRemove) => utf8JsonWriter1.WriteString(name, value));
-		}
-		/// <summary>
-		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
-		/// </summary>
-		/// <param name="name">A string containing the name of the property to add</param>
-		/// <param name="value">The value of the property to add</param>
-		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddProperty(this JsonElement jElement, string name, bool value)
-		{
-			return jElement.ParseAsJsonStringAndMutate((utf8JsonWriter1, namesOfPropertiesToRemove) => utf8JsonWriter1.WriteBoolean(name, value));
-		}
-		/// <summary>
+        /// <summary>
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
 		/// </summary>
 		/// <param name="name">A string containing the name of the property to add</param>
 		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddNullProperty(this JsonElement jElement, string name)
-		{
-			return jElement.ParseAsJsonStringAndMutate((utf8JsonWriter1, namesOfPropertiesToRemove) => utf8JsonWriter1.WriteNull(name));
-		}
-		/// <summary>
+		public static JsonElement AddNullProperty(this JsonElement jElement, string name) => jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) => utf8JsonWriter.WriteNull(name));
+
+        /// <summary>
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
 		/// </summary>
 		/// <param name="property">The property to add</param>
 		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddProperty(this JsonElement jElement, JsonProperty property)
-		{
-			return jElement.ParseAsJsonStringAndMutate((utf8JsonWriter1, namesOfPropertiesToRemove) => property.WriteTo(utf8JsonWriter1));
-		}
-		/// <summary>
+		public static JsonElement AddProperty(this JsonElement jElement, JsonProperty property) => jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) => property.WriteTo(utf8JsonWriter));
+
+        /// <summary>
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
 		/// </summary>
 		/// <param name="name">A string containing the name of the property to add</param>
 		/// <param name="value">The value of the property to add</param>
 		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddProperty(this JsonElement jElement, string name, string[] value)
-		{
-			return jElement.ParseAsJsonStringAndMutate((utf8JsonWriter1, namesOfPropertiesToRemove) =>
-			{
-				utf8JsonWriter1.WritePropertyName(name);
-				utf8JsonWriter1.WriteStartArray();
-				foreach (var element in value)
-				{
-					utf8JsonWriter1.WriteStringValue(element);
-				}
-				utf8JsonWriter1.WriteEndArray();
-			});
-		}
-		/// <summary>
+		public static JsonElement AddProperty(this JsonElement jElement, string name, string[] value) =>
+            jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) =>
+            {
+                utf8JsonWriter.WritePropertyName(name);
+                utf8JsonWriter.WriteStartArray();
+                foreach (var element in value)
+                {
+                    utf8JsonWriter.WriteStringValue(element);
+                }
+                utf8JsonWriter.WriteEndArray();
+            });
+
+        /// <summary>
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way. 
 		/// </summary>
 		/// <param name="name">A string containing the name of the property to add</param>
-		/// <param name="value">The value of the property to add, only simple objects are supported.</param>
+		/// <param name="value">The value of the property to add, primitives and simple objects are supported.</param>
 		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddProperty(this JsonElement jElement, string name, object value)
-		{
-			return jElement.ParseAsJsonStringAndMutate((utf8JsonWriter1, namesOfPropertiesToRemove) =>
-			{
-				utf8JsonWriter1.WritePropertyName(name);
-				utf8JsonWriter1.WriteStartObject();
+		public static JsonElement AddProperty(this JsonElement jElement, string name, object value) =>
+            jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) =>
+            {
+                utf8JsonWriter.WritePropertyName(name);
 
-				foreach (var prop in value.GetProperties())
-				{
-					utf8JsonWriter1.WritePropertyName(prop.Name);
+                // First check if this is a primitive style object
+                var valueTypeCode = Convert.GetTypeCode(value);
+                if (valueTypeCode != TypeCode.Object)
+                {
+                    utf8JsonWriter.RenderValue(value);
+                    return;
+                }
 
-					switch (prop.Value)
-					{
-						case string v:
-							utf8JsonWriter1.WriteStringValue(v);
-							break;
-						case int v:
-							utf8JsonWriter1.WriteNumberValue(v);
-							break;
-						case double v:
-							utf8JsonWriter1.WriteNumberValue(v);
-							break;
-						case DateTime v:
-							utf8JsonWriter1.WriteStringValue(v);
-							break;
-						case Guid v:
-							utf8JsonWriter1.WriteStringValue(v);
-							break;
-						case bool v:
-							utf8JsonWriter1.WriteBooleanValue(v);
-							break;
-						default:
-							utf8JsonWriter1.WriteStringValue(prop.Value.ToString());
-							break;
-					}
-				}
-				utf8JsonWriter1.WriteEndObject();
-			});
-		}
+                // Otherwise render the non primitive object
+                utf8JsonWriter.WriteStartObject();
+                foreach (var (propName, propValue) in value.GetProperties())
+                {
+                    utf8JsonWriter.WritePropertyName(propName);
+                    utf8JsonWriter.RenderValue(propValue);
+                }
+                utf8JsonWriter.WriteEndObject();
+            });
+
+        private static void RenderValue(this Utf8JsonWriter writer, object value)
+        {
+            switch (value)
+            {
+                case string v:
+                    writer.WriteStringValue(v);
+                    break;
+                case bool v:
+                    writer.WriteBooleanValue(v);
+                    break;
+                case decimal v:
+                    writer.WriteNumberValue(v);
+                    break;
+				case int v:
+                    writer.WriteNumberValue(v);
+                    break;
+                case double v:
+                    writer.WriteNumberValue(v);
+                    break;
+                case float v:
+                    writer.WriteNumberValue(v);
+                    break;
+				case DateTime v:
+                    writer.WriteStringValue(v);
+                    break;
+                case Guid v:
+                    writer.WriteStringValue(v);
+                    break;
+                default:
+                    writer.WriteStringValue(value.ToString());
+                    break;
+            }
+        }
+
 		/// <summary>
 		/// Method which recreates a new JsonElement from an existing one, but without one of the exiting properties
 		/// </summary>
@@ -185,40 +148,39 @@ namespace AJP
 		{
 			if (jElement.ValueKind != JsonValueKind.Object)
 				throw new Exception("Only able to add properties to json objects (i.e. jElement.ValueKind == JsonValueKind.Object)");
+			
+            using var memoryStream1 = new MemoryStream();
+            using (var utf8JsonWriter1 = new Utf8JsonWriter(memoryStream1))
+            {
+                utf8JsonWriter1.WriteStartObject();
 
-			using (MemoryStream memoryStream1 = new MemoryStream())
-			{
-				using (Utf8JsonWriter utf8JsonWriter1 = new Utf8JsonWriter(memoryStream1))
-				{
-					utf8JsonWriter1.WriteStartObject();
+                var namesOfPropertiesToRemove = new List<string>();
 
-					var namesOfPropertiesToRemove = new List<string>();
+                mutate?.Invoke(utf8JsonWriter1, namesOfPropertiesToRemove);
 
-					mutate?.Invoke(utf8JsonWriter1, namesOfPropertiesToRemove);
-
-					foreach (var jProp in jElement.EnumerateObject())
-					{
-						if (!(namesOfPropertiesToRemove != null && namesOfPropertiesToRemove.Contains(jProp.Name)))
-						{
-							jProp.WriteTo(utf8JsonWriter1);
-						}
-					}
-					utf8JsonWriter1.WriteEndObject();
-				}
-				var resultJson = Encoding.UTF8.GetString(memoryStream1.ToArray());
-				return JsonDocument.Parse(resultJson).RootElement;
-			}
-		}
+                foreach (var jProp in jElement.EnumerateObject())
+                {
+                    if (!(namesOfPropertiesToRemove.Contains(jProp.Name)))
+                    {
+                        jProp.WriteTo(utf8JsonWriter1);
+                    }
+                }
+                utf8JsonWriter1.WriteEndObject();
+            }
+            var resultJson = Encoding.UTF8.GetString(memoryStream1.ToArray());
+            return JsonDocument.Parse(resultJson).RootElement;
+        }
 		
 		/// <summary>
 		/// Method which returns a list of property name and value, from a given object
 		/// </summary>
 		public static IEnumerable<(string Name, object Value)> GetProperties(this object source)
-		{
-			if (source is IDictionary<string, object> dictionary)
+        {
+            if (source is IDictionary<string, object> dictionary)
 			{
 				return dictionary.Select(x => (x.Key, x.Value));
 			}
+			
 			return source.GetType()
 				.GetProperties(BindingFlags.Public | BindingFlags.Instance)
 				.Where(p => !p.GetGetMethod().GetParameters().Any())
