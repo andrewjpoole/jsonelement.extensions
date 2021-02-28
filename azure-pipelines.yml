@@ -29,17 +29,15 @@ steps:
     configuration: '$(buildConfiguration)'
 
 - task: VSTest@2
+- task: VSTest@2
   inputs:
     testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      **\*Tests.dll
-      !**\*TestAdapter.dll
-      !**\obj\**
+    testAssemblyVer2: '**\bin\Release\net5.0\**\*unittests.dll'
     searchFolder: '$(System.DefaultWorkingDirectory)'
     testFiltercriteria: 'Category!=Integration'
+    codeCoverageEnabled: true
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-
 - task: NuGetCommand@2
   inputs:
     command: 'push'
