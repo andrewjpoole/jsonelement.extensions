@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>AJP</RootNamespace>
     <LangVersion>8.0</LangVersion>
     <nullable>disable</nullable>
@@ -14,6 +14,7 @@
     <RepositoryUrl>https://github.com/andrewjpoole/jsonelement.extensions</RepositoryUrl>
     <PackageTags>JsonElement dynamic System.Text.Json AddProperty</PackageTags>
     <PackageReleaseNotes>
+      1.3.0) targetting netstandard2.1 in order to make of spans and added ConvertToObject methods
       1.2.0) fixed issue where primitive style objects passed in as object were treated incorrectly
       1.1.0) changed target framework to netstandard2.0
       1.0.0) initial version

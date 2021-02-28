@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Linq;
-using System.IO;
 using System.Text;
 using System.Reflection;
+using System.Buffers;
 
 namespace AJP
 {
@@ -23,14 +23,16 @@ namespace AJP
 		/// </summary>
 		/// <param name="name">A string containing the name of the property to add</param>
 		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddNullProperty(this JsonElement jElement, string name) => jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) => utf8JsonWriter.WriteNull(name));
+		public static JsonElement AddNullProperty(this JsonElement jElement, string name) => 
+	        jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) => utf8JsonWriter.WriteNull(name));
 
         /// <summary>
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
 		/// </summary>
 		/// <param name="property">The property to add</param>
 		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddProperty(this JsonElement jElement, JsonProperty property) => jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) => property.WriteTo(utf8JsonWriter));
+		public static JsonElement AddProperty(this JsonElement jElement, JsonProperty property) => 
+	        jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) => property.WriteTo(utf8JsonWriter));
 
         /// <summary>
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
@@ -118,25 +120,20 @@ namespace AJP
 		/// </summary>
 		/// <param name="nameOfPropertyToRemove">A string containing the name of the property to remove</param>
 		/// <returns>A new JsonElement containing the old properties apart from the named property to remove</returns>
-		public static JsonElement RemoveProperty(this JsonElement jElement, string nameOfPropertyToRemove)
-		{
-			return jElement.ParseAsJsonStringAndMutate((writer, namesOfPropertiesToRemove) => namesOfPropertiesToRemove.Add(nameOfPropertyToRemove));
-		}
+		public static JsonElement RemoveProperty(this JsonElement jElement, string nameOfPropertyToRemove) => 
+			jElement.ParseAsJsonStringAndMutate((writer, namesOfPropertiesToRemove) => namesOfPropertiesToRemove.Add(nameOfPropertyToRemove));
+
 		/// <summary>
 		/// Method which recreates a new JsonElement from an existing one, but without some of the exiting properties
 		/// </summary>
 		/// <param name="propertyNamesToRemove">A list of names of the properties to remove</param>
 		/// <returns>A new JsonElement without the properties listed</returns>
-		public static JsonElement RemoveProperties(this JsonElement jElement, List<string> propertyNamesToRemove)
-		{
-			return jElement.ParseAsJsonStringAndMutate((writer, namesOfPropertiesToRemove) => 
+		public static JsonElement RemoveProperties(this JsonElement jElement, List<string> propertyNamesToRemove) =>
+			jElement.ParseAsJsonStringAndMutate((writer, namesOfPropertiesToRemove) =>
 			{
-				foreach (var name in propertyNamesToRemove) 
-				{
-					namesOfPropertiesToRemove.Add(name);
-				}
+				namesOfPropertiesToRemove.AddRange(propertyNamesToRemove);
 			});
-		}
+
 		/// <summary>
 		/// Method which recreates a new JsonElement from an existing one, with the opportunity to add new and remove existing properties
 		/// </summary>
@@ -149,8 +146,8 @@ namespace AJP
 			if (jElement.ValueKind != JsonValueKind.Object)
 				throw new Exception("Only able to add properties to json objects (i.e. jElement.ValueKind == JsonValueKind.Object)");
 			
-            using var memoryStream1 = new MemoryStream();
-            using (var utf8JsonWriter1 = new Utf8JsonWriter(memoryStream1))
+			var arrayBufferWriter = new ArrayBufferWriter<byte>();
+            using (var utf8JsonWriter1 = new Utf8JsonWriter(arrayBufferWriter))
             {
                 utf8JsonWriter1.WriteStartObject();
 
@@ -167,7 +164,7 @@ namespace AJP
                 }
                 utf8JsonWriter1.WriteEndObject();
             }
-            var resultJson = Encoding.UTF8.GetString(memoryStream1.ToArray());
+            var resultJson = Encoding.UTF8.GetString(arrayBufferWriter.WrittenSpan);
             return JsonDocument.Parse(resultJson).RootElement;
         }
 		
@@ -185,6 +182,38 @@ namespace AJP
 				.GetProperties(BindingFlags.Public | BindingFlags.Instance)
 				.Where(p => !p.GetGetMethod().GetParameters().Any())
 				.Select(x => (x.Name, x.GetValue(source)));
+		}
+		
+		/// <summary>
+		/// Method which attempts to convert a given JsonElement into the specified type
+		/// </summary>
+		/// <param name="jElement">The JsonElement to convert</param>
+		/// <param name="options">JsonSerializerOptions to use</param>
+		/// <typeparam name="T">The specified type</typeparam>
+		/// <returns></returns>
+		public static T ConvertToObject<T>(this JsonElement jElement, JsonSerializerOptions options = null)
+		{
+			var arrayBufferWriter = new ArrayBufferWriter<byte>();
+			using (var writer = new Utf8JsonWriter(arrayBufferWriter))
+				jElement.WriteTo(writer);
+			
+			return JsonSerializer.Deserialize<T>(arrayBufferWriter.WrittenSpan, options);
+		}
+
+		/// <summary>
+		/// Method which attempts to convert a given JsonDocument into the specified type
+		/// </summary>
+		/// <param name="jDocument">The JsonDocument to convert</param>
+		/// <param name="options">JsonSerializerOptions to use</param>
+		/// <typeparam name="T">The specified type</typeparam>
+		/// <returns>An instance of the specified type from the supplied JsonDocument</returns>
+		/// <exception cref="ArgumentNullException">Thrown if the JsonDocument cannot be dserialised into the specified type</exception>
+		public static T ConvertToObject<T>(this JsonDocument jDocument, JsonSerializerOptions options = null)
+		{
+			if (jDocument == null)
+				throw new ArgumentNullException(nameof(jDocument));
+			
+			return jDocument.RootElement.ConvertToObject<T>(options);
 		}
 	}
 }
