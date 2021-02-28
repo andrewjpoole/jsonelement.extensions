@@ -54,4 +54,5 @@ steps:
     command: 'push'
     packagesToPush: '$(System.DefaultWorkingDirectory)/**/*.nupkg;!$(System.DefaultWorkingDirectory)/**/*.symbols.nupkg'
     nuGetFeedType: 'external'
-    publishFeedCredentials: 'public nuget'
+    publishFeedCredentials: 'public nuget push'
+
