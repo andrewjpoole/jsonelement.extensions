@@ -40,6 +40,11 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+- task: NuGetAuthenticate@0
+  inputs:
+    nuGetServiceConnections: 'public nuget push'
+    forceReinstallCredentialProvider: true
+
 - task: NuGetCommand@2
   inputs:
     command: 'push'
@@ -55,3 +60,4 @@ steps:
     packagesToPush: '$(System.DefaultWorkingDirectory)/**/*.nupkg;!$(System.DefaultWorkingDirectory)/**/*.symbols.nupkg'
     nuGetFeedType: 'external'
     publishFeedCredentials: 'public nuget push'
+
