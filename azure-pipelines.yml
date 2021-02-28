@@ -31,15 +31,12 @@ steps:
 - task: VSTest@2
   inputs:
     testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      **\*Tests.dll
-      !**\*TestAdapter.dll
-      !**\obj\**
+    testAssemblyVer2: '**\AJP.JsonElementExtensions.UnitTests\bin\Release\net5.0\AJP.JsonElementExtensions.UnitTests.dll'
     searchFolder: '$(System.DefaultWorkingDirectory)'
     testFiltercriteria: 'Category!=Integration'
+    codeCoverageEnabled: true
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-
 - task: NuGetCommand@2
   inputs:
     command: 'push'
