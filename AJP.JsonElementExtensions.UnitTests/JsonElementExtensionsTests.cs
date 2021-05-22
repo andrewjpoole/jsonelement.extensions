@@ -14,7 +14,7 @@ namespace AJP.JsonElementExtensions.UnitTests
         public void Various_AddProperty_methods_should_add_properties_that_can_be_asserted_in_the_output()
         {
 			// get a JsonElement to start with...
-			var jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\" }";
+			const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\" }";
 			var jElement = JsonDocument.Parse(jsonString).RootElement;
 
 			jElement = jElement
@@ -22,7 +22,7 @@ namespace AJP.JsonElementExtensions.UnitTests
 				.AddProperty("Male", true)
 				.AddProperty("Female", false)
 				.AddNullProperty("Alien")
-				.AddProperty("Roles", new string[] { "admin", "user" })
+				.AddProperty("Roles", new [] { "admin", "user" })
 				.AddProperty("LastUpdated", new DateTime(2020, 2, 27, 22, 09, 00))
 				.AddProperty("crazyNewObject", new
 					{
@@ -44,7 +44,7 @@ namespace AJP.JsonElementExtensions.UnitTests
 		public void ParseAsJsonStringAndMutate_method_should_add_properties_that_can_be_asserted_in_the_output()
 		{
 			// get a JsonElement to start with...
-			var jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\" }";
+			const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\" }";
 			var jElement = JsonDocument.Parse(jsonString).RootElement;
 
 			jElement = jElement.ParseAsJsonStringAndMutate((utf8JsonWriter1, namesOfPropertiesToRemove) => 
@@ -61,7 +61,7 @@ namespace AJP.JsonElementExtensions.UnitTests
 		public void RemoveProperty_methods_should_remove_properties_from_the_output()
 		{
 			// get a JsonElement to start with...
-			var jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\" }";
+			const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\" }";
 			var jElement = JsonDocument.Parse(jsonString).RootElement;
 
 			jElement = jElement
@@ -74,7 +74,7 @@ namespace AJP.JsonElementExtensions.UnitTests
 		public void RemoveProperties_methods_should_remove_properties_from_the_output()
 		{
 			// get a JsonElement to start with...
-			var jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\", \"Age\": 38 }";
+			const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\", \"Age\": 38 }";
 			var jElement = JsonDocument.Parse(jsonString).RootElement;
 
 			jElement = jElement.RemoveProperties(new List<string> { "EmailAddress", "Age" });
@@ -86,7 +86,7 @@ namespace AJP.JsonElementExtensions.UnitTests
         [Test] public void AddProperty_method_should_handle_primitive_style_objects_cast_as_objects()
         {
             // get a JsonElement to start with...
-            var jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\", \"Age\": 38 }";
+            const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\", \"Age\": 38 }";
             var jElement = JsonDocument.Parse(jsonString).RootElement;
 
             var stringCastToObject = (object) "3jk4h5gkj3hg45kjh4g5";
@@ -99,7 +99,7 @@ namespace AJP.JsonElementExtensions.UnitTests
         [Test] public void JsonElement_ConvertToObject_method_should_return_the_specified_object()
         {
 	        // get a JsonElement to start with...
-	        var jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\", \"Age\": 38 }";
+	        const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\", \"Age\": 38 }";
 	        var jElement = JsonDocument.Parse(jsonString).RootElement;
 
 	        var result = jElement.ConvertToObject<TestClass>();
@@ -111,13 +111,33 @@ namespace AJP.JsonElementExtensions.UnitTests
         [Test] public void JsonDocument_ConvertToObject_method_should_return_the_specified_object()
         {
 	        // get a JsonElement to start with...
-	        var jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\", \"Age\": 38 }";
+	        const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\", \"Age\": 38 }";
 	        var jDoc = JsonDocument.Parse(jsonString);
 	        
 	        var result = jDoc.ConvertToObject<TestClass>();
 	        Assert.That(result, Is.Not.Null);
 	        Assert.That(result.Name, Is.EqualTo("Andrew"));
 	        Assert.That(result.EmailAddress, Is.EqualTo("a@b.com"));
+        }
+
+        [Test] public void AddProperty_method_should_handle_arrays() {
+	        // get a JsonElement to start with...
+	        const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\", \"Age\": 38 }";
+	        var jElement = JsonDocument.Parse(jsonString).RootElement;
+
+	        var foods = new[] {"mac and cheese", "lasagna", "pizza"};
+	        var result = jElement.AddProperty("foods", foods);
+
+	        Assert.That(result, Is.Not.Null);
+
+	        var arrayProp = result.GetProperty("foods");
+	        Assert.That(arrayProp.ValueKind, Is.EqualTo(JsonValueKind.Array));
+
+	        arrayProp.EnumerateArray()
+		        .Select(x => x.GetString())
+		        .Zip(foods, (a, b) => (a, b))
+		        .ToList()
+		        .ForEach(t => Assert.That(t.a, Is.EqualTo(t.b)));
         }
 	}
 

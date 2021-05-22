@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Buffers;
+using System.Collections;
 
 namespace AJP
 {
@@ -109,6 +110,12 @@ namespace AJP
                 case Guid v:
                     writer.WriteStringValue(v);
                     break;
+                case IEnumerable<object> arr:
+	                writer.WriteStartArray();
+	                arr.ToList()
+		                .ForEach(obj => RenderValue(writer, obj));
+	                writer.WriteEndArray();
+	                break;
                 default:
                     writer.WriteStringValue(value.ToString());
                     break;
