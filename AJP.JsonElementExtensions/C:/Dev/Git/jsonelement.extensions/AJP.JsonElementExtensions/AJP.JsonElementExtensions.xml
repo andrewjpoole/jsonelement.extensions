@@ -28,20 +28,13 @@
             <param name="property">The property to add</param>
             <returns>A new JsonElement containing the old properties plus the new property</returns>
         </member>
-        <member name="M:AJP.JsonElementExtensions.AddProperty(System.Text.Json.JsonElement,System.String,System.String[])">
-            <summary>
-            Method which recreates a new JsonElement from an existing one, with an extra property added along the way
-            </summary>
-            <param name="name">A string containing the name of the property to add</param>
-            <param name="value">The value of the property to add</param>
-            <returns>A new JsonElement containing the old properties plus the new property</returns>
-        </member>
-        <member name="M:AJP.JsonElementExtensions.AddProperty(System.Text.Json.JsonElement,System.String,System.Object)">
+        <member name="M:AJP.JsonElementExtensions.AddProperty(System.Text.Json.JsonElement,System.String,System.Object,System.Text.Json.JsonSerializerOptions)">
             <summary>
             Method which recreates a new JsonElement from an existing one, with an extra property added along the way. 
             </summary>
             <param name="name">A string containing the name of the property to add</param>
             <param name="value">The value of the property to add, primitives and simple objects are supported.</param>
+            <param name="options">The serializer options to respect when converting values.</param>
             <returns>A new JsonElement containing the old properties plus the new property</returns>
         </member>
         <member name="M:AJP.JsonElementExtensions.RemoveProperty(System.Text.Json.JsonElement,System.String)">
@@ -51,7 +44,7 @@
             <param name="nameOfPropertyToRemove">A string containing the name of the property to remove</param>
             <returns>A new JsonElement containing the old properties apart from the named property to remove</returns>
         </member>
-        <member name="M:AJP.JsonElementExtensions.RemoveProperties(System.Text.Json.JsonElement,System.Collections.Generic.List{System.String})">
+        <member name="M:AJP.JsonElementExtensions.RemoveProperties(System.Text.Json.JsonElement,System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             Method which recreates a new JsonElement from an existing one, but without some of the exiting properties
             </summary>

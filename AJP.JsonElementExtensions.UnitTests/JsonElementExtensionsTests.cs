@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 
@@ -46,6 +45,38 @@ namespace AJP.JsonElementExtensions.UnitTests
 			Assert.That(jElement.GetProperty("LastUpdated").GetString(), Is.EqualTo(new DateTime(2020, 2, 27, 22, 09, 00).ToString("s")));
 			Assert.That(jElement.GetProperty("crazyNewObject").EnumerateObject().FirstOrDefault().Value.ToString(), Is.EqualTo("Hobbies"));
 			Assert.That(jElement.GetProperty("nestedObject").GetProperty("Object").GetProperty("Name").GetString(), Is.EqualTo("Hobbies"));
+        }
+
+        [Test]
+        public void AddProperty_method_respects_json_options() {
+	        var options = new JsonSerializerOptions {
+		        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+		        IgnoreNullValues = true
+	        };
+		        
+	        // get a JsonElement to start with...
+	        const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\" }";
+	        var jElement = JsonDocument.Parse(jsonString).RootElement;
+
+	        var obj = new {
+		        Hello = "hello",
+		        World = (string)null
+	        };
+
+	        jElement = jElement
+		        .AddProperty("withOptions", obj, options)
+		        .AddProperty("withoutOptions", obj);
+
+	        var withOptions = jElement.GetProperty("withOptions");
+	        var withoutOptions = jElement.GetProperty("withoutOptions"); 
+	        
+	        Assert.That(withOptions.TryGetProperty("hello", out var _), Is.True);
+	        Assert.That(withOptions.TryGetProperty("Hello", out var _), Is.Not.True);
+	        Assert.That(withOptions.TryGetProperty("world", out var _), Is.Not.True);
+	       
+	        Assert.That(withoutOptions.TryGetProperty("Hello", out var _), Is.True);
+	        Assert.That(withoutOptions.TryGetProperty("hello", out var _), Is.Not.True);
+	        Assert.That(withoutOptions.TryGetProperty("World", out var _), Is.True);
         }
 
 		[Test]
