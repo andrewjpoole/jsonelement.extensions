@@ -22,13 +22,18 @@ namespace AJP.JsonElementExtensions.UnitTests
 				.AddProperty("Male", true)
 				.AddProperty("Female", false)
 				.AddNullProperty("Alien")
-				.AddProperty("Roles", new [] { "admin", "user" })
+				.AddProperty("Roles", new[] {"admin", "user"})
+				.AddProperty("Foods", new List<string> {"mac and cheese", "lasagna"})
 				.AddProperty("LastUpdated", new DateTime(2020, 2, 27, 22, 09, 00))
-				.AddProperty("crazyNewObject", new
-					{
-						Name = "Hobbies",
-						Value = "bass guitar and writing c# code"
-					});
+				.AddProperty("crazyNewObject", new {
+					Name = "Hobbies",
+					Value = "bass guitar and writing c# code"
+				})
+				.AddProperty("nestedObject", new {
+					Object = new {
+						Name = "Hobbies"
+					}
+				});
 
 			Assert.That(jElement.GetProperty("Age").ToString(), Is.EqualTo("38"));
 			Assert.That(jElement.GetProperty("Male").GetBoolean(), Is.EqualTo(true));
@@ -36,8 +41,11 @@ namespace AJP.JsonElementExtensions.UnitTests
 			Assert.That(jElement.GetProperty("Alien").GetString(), Is.EqualTo(null));
 			Assert.That(jElement.GetProperty("Roles").GetArrayLength(), Is.EqualTo(2));
 			Assert.That(jElement.GetProperty("Roles").EnumerateArray().FirstOrDefault().GetString(), Is.EqualTo("admin"));
+			Assert.That(jElement.GetProperty("Foods").GetArrayLength(), Is.EqualTo(2));
+			Assert.That(jElement.GetProperty("Foods").EnumerateArray().Select(x => x.GetString()).ToArray(), Is.EqualTo(new[] {"mac and cheese", "lasagna"}));
 			Assert.That(jElement.GetProperty("LastUpdated").GetString(), Is.EqualTo(new DateTime(2020, 2, 27, 22, 09, 00).ToString("s")));
 			Assert.That(jElement.GetProperty("crazyNewObject").EnumerateObject().FirstOrDefault().Value.ToString(), Is.EqualTo("Hobbies"));
+			Assert.That(jElement.GetProperty("nestedObject").GetProperty("Object").GetProperty("Name").GetString(), Is.EqualTo("Hobbies"));
         }
 
 		[Test]
@@ -118,26 +126,6 @@ namespace AJP.JsonElementExtensions.UnitTests
 	        Assert.That(result, Is.Not.Null);
 	        Assert.That(result.Name, Is.EqualTo("Andrew"));
 	        Assert.That(result.EmailAddress, Is.EqualTo("a@b.com"));
-        }
-
-        [Test] public void AddProperty_method_should_handle_arrays() {
-	        // get a JsonElement to start with...
-	        const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\", \"Age\": 38 }";
-	        var jElement = JsonDocument.Parse(jsonString).RootElement;
-
-	        var foods = new[] {"mac and cheese", "lasagna", "pizza"};
-	        var result = jElement.AddProperty("foods", foods);
-
-	        Assert.That(result, Is.Not.Null);
-
-	        var arrayProp = result.GetProperty("foods");
-	        Assert.That(arrayProp.ValueKind, Is.EqualTo(JsonValueKind.Array));
-
-	        arrayProp.EnumerateArray()
-		        .Select(x => x.GetString())
-		        .Zip(foods, (a, b) => (a, b))
-		        .ToList()
-		        .ForEach(t => Assert.That(t.a, Is.EqualTo(t.b)));
         }
 	}
 

@@ -63,27 +63,23 @@ namespace AJP
             jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) =>
             {
                 utf8JsonWriter.WritePropertyName(name);
-
-                // First check if this is a primitive style object
-                var valueTypeCode = Convert.GetTypeCode(value);
-                if (valueTypeCode != TypeCode.Object)
-                {
-                    utf8JsonWriter.RenderValue(value);
-                    return;
-                }
-
-                // Otherwise render the non primitive object
-                utf8JsonWriter.WriteStartObject();
-                foreach (var (propName, propValue) in value.GetProperties())
-                {
-                    utf8JsonWriter.WritePropertyName(propName);
-                    utf8JsonWriter.RenderValue(propValue);
-                }
-                utf8JsonWriter.WriteEndObject();
+                RenderValue(utf8JsonWriter, value);
             });
 
         private static void RenderValue(this Utf8JsonWriter writer, object value)
         {
+	        // The value is not a primitive.
+	        if(Convert.GetTypeCode(value) == TypeCode.Object && !(value is IEnumerable)) {
+		        writer.WriteStartObject();
+		        foreach (var (propName, propValue) in value.GetProperties())
+		        {
+			        writer.WritePropertyName(propName);
+			        writer.RenderValue(propValue);
+		        }
+		        writer.WriteEndObject();
+		        return;
+	        }
+	        
             switch (value)
             {
                 case string v:
