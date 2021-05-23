@@ -6,7 +6,6 @@ using System.Text;
 using System.Reflection;
 using System.Buffers;
 using System.Collections;
-using System.Diagnostics;
 
 namespace AJP
 {
@@ -111,7 +110,8 @@ namespace AJP
             }
         }
 
-        private static void HandleNull(Utf8JsonWriter writer, string propName, JsonSerializerOptions options = null) {
+        private static void HandleNull(Utf8JsonWriter writer, string propName, JsonSerializerOptions options = null) 
+        {
 	        if(options?.IgnoreNullValues == true)
 		        return;
 	        

@@ -48,7 +48,8 @@ namespace AJP.JsonElementExtensions.UnitTests
         }
 
         [Test]
-        public void AddProperty_method_respects_json_options() {
+        public void AddProperty_method_respects_json_options() 
+        {
 	        var options = new JsonSerializerOptions {
 		        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
 		        IgnoreNullValues = true
