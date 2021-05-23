@@ -32,7 +32,8 @@ namespace AJP.JsonElementExtensions.UnitTests
 					Object = new {
 						Name = "Hobbies"
 					}
-				});
+				})
+				.AddNullProperty("nullProperty");
 
 			Assert.That(jElement.GetProperty("Age").ToString(), Is.EqualTo("38"));
 			Assert.That(jElement.GetProperty("Male").GetBoolean(), Is.EqualTo(true));
@@ -45,6 +46,7 @@ namespace AJP.JsonElementExtensions.UnitTests
 			Assert.That(jElement.GetProperty("LastUpdated").GetString(), Is.EqualTo(new DateTime(2020, 2, 27, 22, 09, 00).ToString("s")));
 			Assert.That(jElement.GetProperty("crazyNewObject").EnumerateObject().FirstOrDefault().Value.ToString(), Is.EqualTo("Hobbies"));
 			Assert.That(jElement.GetProperty("nestedObject").GetProperty("Object").GetProperty("Name").GetString(), Is.EqualTo("Hobbies"));
+			Assert.That(jElement.GetProperty("nullProperty").ValueKind, Is.EqualTo(JsonValueKind.Null));
         }
 
         [Test]
