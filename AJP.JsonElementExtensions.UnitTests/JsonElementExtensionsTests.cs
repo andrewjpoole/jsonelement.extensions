@@ -33,7 +33,7 @@ namespace AJP.JsonElementExtensions.UnitTests
 						Name = "Hobbies"
 					}
 				})
-				.AddNullProperty("nullProperty");
+				.AddProperty("nullProperty", null);
 
 			Assert.That(jElement.GetProperty("Age").ToString(), Is.EqualTo("38"));
 			Assert.That(jElement.GetProperty("Male").GetBoolean(), Is.EqualTo(true));
@@ -68,7 +68,11 @@ namespace AJP.JsonElementExtensions.UnitTests
 
 	        jElement = jElement
 		        .AddProperty("withOptions", obj, options)
-		        .AddProperty("withoutOptions", obj);
+		        .AddProperty("withoutOptions", obj)
+		        .AddNullProperty("NullWithOptions", options)
+		        .AddNullProperty("NullWithoutOptions")
+		        .AddNullProperty("NullWithoutIgnoreNull",
+			        new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
 
 	        var withOptions = jElement.GetProperty("withOptions");
 	        var withoutOptions = jElement.GetProperty("withoutOptions"); 
@@ -80,6 +84,10 @@ namespace AJP.JsonElementExtensions.UnitTests
 	        Assert.That(withoutOptions.TryGetProperty("Hello", out var _), Is.True);
 	        Assert.That(withoutOptions.TryGetProperty("hello", out var _), Is.Not.True);
 	        Assert.That(withoutOptions.TryGetProperty("World", out var _), Is.True);
+
+	        Assert.That(jElement.TryGetProperty("nullWithOptions", out var _), Is.Not.True);
+	        Assert.That(jElement.TryGetProperty("NullWithoutOptions", out var _), Is.True);
+	        Assert.That(jElement.TryGetProperty("nullWithoutIgnoreNull", out var _), Is.True);
         }
 
 		[Test]
