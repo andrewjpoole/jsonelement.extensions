@@ -23,9 +23,10 @@ namespace AJP
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
 		/// </summary>
 		/// <param name="name">A string containing the name of the property to add</param>
+		/// <param name="options">The json serializer options to respect.</param>
 		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddNullProperty(this JsonElement jElement, string name) => 
-	        jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) => utf8JsonWriter.WriteNull(name));
+		public static JsonElement AddNullProperty(this JsonElement jElement, string name, JsonSerializerOptions options = null) => 
+	        jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) => HandleNull(utf8JsonWriter, name, options));
 
         /// <summary>
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
@@ -46,7 +47,7 @@ namespace AJP
             jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) =>
             {
 	            if(value is null) {
-					HandleNull(utf8JsonWriter, name, options);
+		            HandleNull(utf8JsonWriter, name, options);
 					return;
 	            }
 	            
