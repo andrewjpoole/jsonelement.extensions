@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Buffers;
+using System.Collections;
 
 namespace AJP
 {
@@ -22,9 +23,10 @@ namespace AJP
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
 		/// </summary>
 		/// <param name="name">A string containing the name of the property to add</param>
+		/// <param name="options">The json serializer options to respect.</param>
 		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddNullProperty(this JsonElement jElement, string name) => 
-	        jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) => utf8JsonWriter.WriteNull(name));
+		public static JsonElement AddNullProperty(this JsonElement jElement, string name, JsonSerializerOptions options = null) => 
+	        jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) => HandleNull(utf8JsonWriter, name, options));
 
         /// <summary>
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
@@ -35,54 +37,42 @@ namespace AJP
 	        jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) => property.WriteTo(utf8JsonWriter));
 
         /// <summary>
-		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way
-		/// </summary>
-		/// <param name="name">A string containing the name of the property to add</param>
-		/// <param name="value">The value of the property to add</param>
-		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddProperty(this JsonElement jElement, string name, string[] value) =>
-            jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) =>
-            {
-                utf8JsonWriter.WritePropertyName(name);
-                utf8JsonWriter.WriteStartArray();
-                foreach (var element in value)
-                {
-                    utf8JsonWriter.WriteStringValue(element);
-                }
-                utf8JsonWriter.WriteEndArray();
-            });
-
-        /// <summary>
 		/// Method which recreates a new JsonElement from an existing one, with an extra property added along the way. 
 		/// </summary>
 		/// <param name="name">A string containing the name of the property to add</param>
 		/// <param name="value">The value of the property to add, primitives and simple objects are supported.</param>
+		/// <param name="options">The serializer options to respect when converting values.</param>
 		/// <returns>A new JsonElement containing the old properties plus the new property</returns>
-		public static JsonElement AddProperty(this JsonElement jElement, string name, object value) =>
+		public static JsonElement AddProperty(this JsonElement jElement, string name, object value, JsonSerializerOptions options = null) =>
             jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, namesOfPropertiesToRemove) =>
             {
+	            if(value is null) {
+		            HandleNull(utf8JsonWriter, name, options);
+					return;
+	            }
+	            
                 utf8JsonWriter.WritePropertyName(name);
-
-                // First check if this is a primitive style object
-                var valueTypeCode = Convert.GetTypeCode(value);
-                if (valueTypeCode != TypeCode.Object)
-                {
-                    utf8JsonWriter.RenderValue(value);
-                    return;
-                }
-
-                // Otherwise render the non primitive object
-                utf8JsonWriter.WriteStartObject();
-                foreach (var (propName, propValue) in value.GetProperties())
-                {
-                    utf8JsonWriter.WritePropertyName(propName);
-                    utf8JsonWriter.RenderValue(propValue);
-                }
-                utf8JsonWriter.WriteEndObject();
+                RenderValue(utf8JsonWriter, value, options);
             });
 
-        private static void RenderValue(this Utf8JsonWriter writer, object value)
+        private static void RenderValue(this Utf8JsonWriter writer, object value, JsonSerializerOptions options = null)
         {
+	        // The value is not a primitive.
+	        if(Convert.GetTypeCode(value) == TypeCode.Object && !(value is IEnumerable)) {
+		        writer.WriteStartObject();
+		        foreach (var (propName, propValue) in value.GetProperties()) {
+			        if(propValue is null) {
+						HandleNull(writer, propName, options);
+						continue;
+			        }
+			        
+			        writer.WritePropertyName(options?.PropertyNamingPolicy.ConvertName(propName) ?? propName);
+			        writer.RenderValue(propValue);
+		        }
+		        writer.WriteEndObject();
+		        return;
+	        }
+	        
             switch (value)
             {
                 case string v:
@@ -109,10 +99,24 @@ namespace AJP
                 case Guid v:
                     writer.WriteStringValue(v);
                     break;
+                case IEnumerable<object> arr:
+	                writer.WriteStartArray();
+	                arr.ToList()
+		                .ForEach(obj => RenderValue(writer, obj));
+	                writer.WriteEndArray();
+	                break;
                 default:
                     writer.WriteStringValue(value.ToString());
                     break;
             }
+        }
+
+        private static void HandleNull(Utf8JsonWriter writer, string propName, JsonSerializerOptions options = null) 
+        {
+	        if(options?.IgnoreNullValues == true)
+		        return;
+	        
+	        writer.WriteNull(options?.PropertyNamingPolicy?.ConvertName(propName) ?? propName);
         }
 
 		/// <summary>
@@ -128,7 +132,7 @@ namespace AJP
 		/// </summary>
 		/// <param name="propertyNamesToRemove">A list of names of the properties to remove</param>
 		/// <returns>A new JsonElement without the properties listed</returns>
-		public static JsonElement RemoveProperties(this JsonElement jElement, List<string> propertyNamesToRemove) =>
+		public static JsonElement RemoveProperties(this JsonElement jElement, IEnumerable<string> propertyNamesToRemove) =>
 			jElement.ParseAsJsonStringAndMutate((writer, namesOfPropertiesToRemove) =>
 			{
 				namesOfPropertiesToRemove.AddRange(propertyNamesToRemove);

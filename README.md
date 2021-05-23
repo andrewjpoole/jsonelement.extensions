@@ -1,5 +1,11 @@
 # JsonElement.Extensions
 
+
+![Azure DevOps builds](https://img.shields.io/azure-devops/build/andrewjpoole/cdadc2b6-5273-431d-b963-d334c86e308b/7)
+![Nuget](https://img.shields.io/nuget/v/AJP.JsonElementExtensions?label=nuget%20version)
+![Nuget](https://img.shields.io/nuget/dt/AJP.JsonElementExtensions?label=nuget%20downloads)
+
+
 ## What is it?
 
 A collection of extension methods for System.Text.Json.JsonElement, for adding/removing properties dynamically
