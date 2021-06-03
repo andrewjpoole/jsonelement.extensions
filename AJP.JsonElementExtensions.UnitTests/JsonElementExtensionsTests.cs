@@ -89,15 +89,75 @@ namespace AJP.JsonElementExtensions.UnitTests
 	        Assert.That(jElement.TryGetProperty("NullWithoutOptions", out var _), Is.True);
 	        Assert.That(jElement.TryGetProperty("nullWithoutIgnoreNull", out var _), Is.True);
         }
+		
+        [TestCase(2, @"{""Name"":""Andrew"",""EmailAddress"":""a@b.com"",""IsAdmin"":true}")]
+        [TestCase(1, @"{""Name"":""Andrew"",""IsAdmin"":true,""EmailAddress"":""a@b.com""}")]
+        [TestCase(0, @"{""IsAdmin"":true,""Name"":""Andrew"",""EmailAddress"":""a@b.com""}")]
+        public void InsertProperty_adds_property_at_correct_index(int insertAt, string expected)
+        {
+            var jElement = GetJsonElement();
+            jElement = jElement.InsertProperty("IsAdmin", true, insertAt);
+			Assert.That(jElement.ToString(), Is.EqualTo(expected));
+        }
 
 		[Test]
+        public void InsertProperty_throws_if_insertAt_is_larger_than_the_length_of_the_list()
+        {
+            var jElement = GetJsonElement();
+            Assert.Throws<ArgumentOutOfRangeException>(() => jElement.InsertProperty("IsAdmin", true, 99));
+        }
+
+		[Test]
+        public void InsertProperty_should_add_properties_that_can_be_asserted_in_the_output()
+        {
+
+        }
+
+        [Test]
+        public void InsertProperty_should_add_a_JsonProperty_that_can_be_asserted_in_the_output()
+        {
+
+        }
+
+        [Test]
+        public void InsertProperty_should_respect_json_options()
+        {
+
+        }
+
+        [Test]
+        public void UpdateProperty_should_add_properties_that_can_be_asserted_in_the_output()
+        {
+            var jElement = GetJsonElement();
+            jElement = jElement.UpdateProperty("Name", "Bob");
+            Assert.That(jElement.ToString(), Is.EqualTo(@"{""Name"":""Andrew"",""EmailAddress"":""a@b.com""}"));
+		}
+
+        [Test]
+        public void UpdateProperty_should_add_a_JsonProperty_that_can_be_asserted_in_the_output()
+        {
+
+        }
+
+        [Test]
+        public void UpdateProperty_should_respect_json_options()
+        {
+
+        }
+
+
+		[Test]
+        public void ParseAsJsonStringAndMutatePreservingOrder_method_should_be_able_to_reorder_properties()
+        {
+
+        }
+
+        [Test]
 		public void ParseAsJsonStringAndMutate_method_should_add_properties_that_can_be_asserted_in_the_output()
 		{
-			// get a JsonElement to start with...
-			const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\" }";
-			var jElement = JsonDocument.Parse(jsonString).RootElement;
+            var jElement = GetJsonElement();
 
-			jElement = jElement.ParseAsJsonStringAndMutate((utf8JsonWriter1, namesOfPropertiesToRemove) => 
+            jElement = jElement.ParseAsJsonStringAndMutate((utf8JsonWriter1, namesOfPropertiesToRemove) => 
 			{
 				namesOfPropertiesToRemove.Add("EmailAddress");
 				utf8JsonWriter1.WriteBoolean("IsAdmin", true);
@@ -105,7 +165,31 @@ namespace AJP.JsonElementExtensions.UnitTests
 
 			Assert.That(jElement.GetProperty("IsAdmin").ToString(), Is.EqualTo(true.ToString()));
 			Assert.Throws<KeyNotFoundException>(() => jElement.GetProperty("EmailAddress"));
-		}		
+		}
+
+        private static JsonElement GetJsonElement()
+        {
+            const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\" }";
+            var jElement = JsonDocument.Parse(jsonString).RootElement;
+            return jElement;
+        }
+
+        [Test]
+        public void ParseAsJsonStringAndMutatePreservingOrder_method_should_add_properties_that_can_be_asserted_in_the_output()
+        {
+            // get a JsonElement to start with...
+            const string jsonString = "{ \"Name\": \"Andrew\", \"EmailAddress\": \"a@b.com\" }";
+            var jElement = JsonDocument.Parse(jsonString).RootElement;
+
+            jElement = jElement.ParseAsJsonStringAndMutatePreservingOrder(props =>
+            {
+                props.RemoveAll(x => x.Name == "EmailAddress");
+				props.Insert(0, ("IsAdmin", true));
+			}, new JsonSerializerOptions());
+
+            Assert.That(jElement.GetProperty("IsAdmin").ToString(), Is.EqualTo(true.ToString()));
+            Assert.Throws<KeyNotFoundException>(() => jElement.GetProperty("EmailAddress"));
+        }
 
 		[Test]
 		public void RemoveProperty_methods_should_remove_properties_from_the_output()
