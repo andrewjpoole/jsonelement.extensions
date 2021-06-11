@@ -13,42 +13,35 @@ namespace AJP
     /// Methods which allow the addition or removal of properties on a JsonElement.
     /// JsonElement is immutable, so these methods work by enumerating the existing properties and writing them into a new jsonstring in memory.
     /// Additional properties can be added and existing properties can be removed and the resulting string is parsed into a new JsonElement which is returned.
-    /// Please note this roundtrip process happens for every call, so if lots of changes are needed, please consider/test using ParseAsJsonStringAndMutate() 
-    /// so that all changes can be done together, with only one roudtrip process.
+    /// Please note this roundtrip process happens for every call, so if lots of changes are needed, please consider/test using ParseAsJsonStringAndMutate()
+    /// OR ParseAsJsonStringAndMutatePreservingOrder() so that all changes can be done together, minimising roudtrip processes.
     /// A new JsonElement is returned, the original is unchanged.
     /// </summary>
     public static class JsonElementExtensions
     {
         /// <summary>
         /// Method which recreates a new JsonElement from an existing one, with an extra null valued property added to the start of the list of properties.
-        /// If you care about where the new property should appear, use InsertNullProperty(), although its a slightly more expensive operation.
+        /// If you care about where the new property should appear in the list of properties, use InsertNullProperty(), although its a slightly more expensive operation.
+        /// If you have multiple changes to make to the JsonElement, please consider/test using ParseAsJsonStringAndMutate() 
+        /// so that all changes can be done together, with only one roudtrip process. 
         /// </summary>
         /// <param name="name">A string containing the name of the property to add</param>
         /// <param name="options">The json serializer options to respect.</param>
         /// <returns>A new JsonElement containing the old properties plus the new property</returns>
-        public static JsonElement AddNullProperty(this JsonElement jElement, string name,
-            JsonSerializerOptions options = null) =>
+        public static JsonElement AddNullProperty(this JsonElement jElement, string name, JsonSerializerOptions options = null) =>
             jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, _) => HandleNull(utf8JsonWriter, name, options));
 
         /// <summary>
         /// Method which recreates a new JsonElement from an existing one, with an extra property added to the start of the list of properties.
-        /// If you care about where the new property should appear, use InsertProperty(), although its a slightly more expensive operation.
-        /// </summary>
-        /// <param name="property">The property to add</param>
-        /// <returns>A new JsonElement containing the old properties plus the new property</returns>
-        public static JsonElement AddProperty(this JsonElement jElement, JsonProperty property) =>
-            jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, _) => property.WriteTo(utf8JsonWriter));
-
-        /// <summary>
-        /// Method which recreates a new JsonElement from an existing one, with an extra property added to the start of the list of properties.
-        /// If you care about where the new property should appear, use InsertProperty(), although its a slightly more expensive operation.. 
+        /// If you care about where the new property should appear in the list of properties, use InsertProperty(), although its a slightly more expensive operation.
+        /// If you have multiple changes to make to the JsonElement, please consider/test using ParseAsJsonStringAndMutate() 
+        /// so that all changes can be done together, with only one roudtrip process. 
         /// </summary>
         /// <param name="name">A string containing the name of the property to add</param>
         /// <param name="value">The value of the property to add, primitives and simple objects are supported.</param>
         /// <param name="options">The serializer options to respect when converting values.</param>
         /// <returns>A new JsonElement containing the old properties plus the new property</returns>
-        public static JsonElement AddProperty(this JsonElement jElement, string name, object value,
-            JsonSerializerOptions options = null) =>
+        public static JsonElement AddProperty(this JsonElement jElement, string name, object value, JsonSerializerOptions options = null) =>
             jElement.ParseAsJsonStringAndMutate((utf8JsonWriter, _) =>
             {
                 if (value is null)
@@ -60,26 +53,48 @@ namespace AJP
                 utf8JsonWriter.WritePropertyName(name);
                 RenderValue(utf8JsonWriter, value, options);
             });
-        
-        public static JsonElement InsertProperty(this JsonElement jElement, string name, object value, int insertAt,
-            JsonSerializerOptions options = null) =>
-            jElement.ParseAsJsonStringAndMutatePreservingOrder(props => props.Insert(insertAt, (name, value)), options);
 
-        public static JsonElement InsertProperty(this JsonElement jElement, JsonProperty property, int insertAt,
-            JsonSerializerOptions options = null) =>
-            jElement.ParseAsJsonStringAndMutatePreservingOrder(props => props.Insert(insertAt, (property.Name, property.Value)), options);
+        /// <summary>
+        /// Method which recreates a new JsonElement from an existing one, with an extra property inserted at a specified position in the list of properties.
+        /// If you don't care about where the new property should appear in the list of properties, or if you care more about performance,
+        /// use AddProperty(), which is a slightly less expensive operation.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <param name="insertAt"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public static JsonElement InsertProperty(this JsonElement jElement, string name, object value, int insertAt, JsonSerializerOptions options = null) =>
+            jElement.ParseAsJsonStringAndMutatePreservingOrder(props => props.Insert(name, value, insertAt), options);
 
-        public static JsonElement InsertNullProperty(this JsonElement jElement, string name, int insertAt,
-            JsonSerializerOptions options = null) =>
-            jElement.ParseAsJsonStringAndMutatePreservingOrder(props => props.Insert(insertAt, (name, null)), options);
-        
-        public static JsonElement UpdateProperty(this JsonElement jElement, string nameOfPropertytoUpdate, object newValue, JsonSerializerOptions serializerOptions = null) 
+        /// <summary>
+        /// Method which recreates a new JsonElement from an existing one, with an extra null property inserted at a specified position in the list of properties.
+        /// If you don't care about where the new property should appear in the list of properties, or if you care more about performance,
+        /// use AddNullProperty(), which is a slightly less expensive operation.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="insertAt"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public static JsonElement InsertNullProperty(this JsonElement jElement, string name, int insertAt, JsonSerializerOptions options = null) =>
+            jElement.ParseAsJsonStringAndMutatePreservingOrder(props => props.Insert(name, null, insertAt), options);
+
+        /// <summary>
+        /// Method which recreates a new JsonElement from an existing one, with a property updated, preserving the order of the list of properties.
+        /// If you don't care about preserving the order of the list of properties, or if you care more about performance,
+        /// you could use ParseAsJsonStringAndMutate() which is a slightly less expensive operation.
+        /// </summary>
+        /// <param name="nameOfPropertytoUpdate"></param>
+        /// <param name="newValue"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public static JsonElement UpdateProperty(this JsonElement jElement, string nameOfPropertytoUpdate, object newValue, JsonSerializerOptions options = null) 
             => jElement.ParseAsJsonStringAndMutatePreservingOrder(props =>
         {
             var propToUpdate = props.FirstOrDefault(p => p.Name == nameOfPropertytoUpdate);
             propToUpdate.Value = newValue;
-        }, serializerOptions ?? new JsonSerializerOptions());
-
+        }, options ?? new JsonSerializerOptions());
+        
         /// <summary>
 		/// Method which recreates a new JsonElement from an existing one, but without one of the exiting properties
 		/// </summary>
@@ -96,15 +111,16 @@ namespace AJP
 		public static JsonElement RemoveProperties(this JsonElement jElement, IEnumerable<string> propertyNamesToRemove) =>
 			jElement.ParseAsJsonStringAndMutate((writer, namesOfPropertiesToRemove) => namesOfPropertiesToRemove.AddRange(propertyNamesToRemove));
 
-		/// <summary>
-		/// Method which recreates a new JsonElement from an existing one, with the opportunity to add new properties to the start of the object
-		/// and remove existing properties.
-		/// </summary>
-		/// <param name="mutate">An Action of Utf8JsonWriter and List of strings. 
-		/// The Utf8JsonWriter allows the calling code to write additional properties, its possible to add highly complex nested structures,
-		/// the list of strings is a list names of any existing properties to be removed from the resulting JsonElement</param>
-		/// <returns>A new JsonElement</returns>
-		public static JsonElement ParseAsJsonStringAndMutate(this JsonElement jElement, Action<Utf8JsonWriter, List<string>> mutate)
+        /// <summary>
+        /// Method which recreates a new JsonElement from an existing one, with the opportunity to add new properties to the start of the object
+        /// and remove existing properties. New properties will be added to the beginning of the list, if you care about the order of the properties,
+        /// use ParseAsJsonStringAndMutatePreservingOrder() however that method is slightly more expensive in terms of time and allocation.
+        /// </summary>
+        /// <param name="mutate">An Action of Utf8JsonWriter and List of strings. 
+        /// The Utf8JsonWriter allows the calling code to write additional properties, its possible to add highly complex nested structures,
+        /// the list of strings is a list names of any existing properties to be removed from the resulting JsonElement</param>
+        /// <returns>A new JsonElement</returns>
+        public static JsonElement ParseAsJsonStringAndMutate(this JsonElement jElement, Action<Utf8JsonWriter, List<string>> mutate)
 		{
 			if (jElement.ValueKind != JsonValueKind.Object)
 				throw new Exception("Only able to add properties to json objects (i.e. jElement.ValueKind == JsonValueKind.Object)");
@@ -140,16 +156,18 @@ namespace AJP
         /// This list contains the properties from the JsonElement in order, items can be added, removed or updated.
         /// The resulting JsonElement will be built from the mutated list of properties. 
         /// </param>
-        /// <param name="serializerOptions">JsonSerializerOptions that will be respected when a value is rendered.</param>
+        /// <param name="options">JsonSerializerOptions that will be respected when a value is rendered.</param>
         /// <returns></returns>
-        public static JsonElement ParseAsJsonStringAndMutatePreservingOrder(this JsonElement jElement, 
-            Action<List<(string Name, object Value)>> mutateProps,
-            JsonSerializerOptions serializerOptions)
+        public static JsonElement ParseAsJsonStringAndMutatePreservingOrder(this JsonElement jElement, Action<PropertyList> mutateProps, JsonSerializerOptions options)
         {
             if (jElement.ValueKind != JsonValueKind.Object)
                 throw new Exception("Only able to add properties to json objects (i.e. jElement.ValueKind == JsonValueKind.Object)");
-
-            List<(string Name, object Value)> props = jElement.EnumerateObject().Select(p => (p.Name, p.Value as object)).ToList();
+            
+            var props = new PropertyList();
+            foreach (var prop in jElement.EnumerateObject())
+            {
+                props.Add(prop.Name, prop.Value);
+            }
 
 			mutateProps.Invoke(props);
 
@@ -158,13 +176,24 @@ namespace AJP
             {
                 jsonWriter.WriteStartObject();
 
-                foreach (var (name, value) in props)
+                foreach (Property prop in props)
                 {
-                    jsonWriter.WritePropertyName(name);
-					if (value is JsonElement jProp)
-						jProp.WriteTo(jsonWriter);
+                    if (prop.Value is null)
+                    {
+                        HandleNull(jsonWriter, prop.Name, options);
+                    }
                     else
-                        RenderValue(jsonWriter, value, serializerOptions);
+                    {
+                        jsonWriter.WritePropertyName(options?.PropertyNamingPolicy?.ConvertName(prop.Name) ?? prop.Name);
+                        if (prop.Value is JsonElement jProp)
+                        {
+                            jProp.WriteTo(jsonWriter);
+                        }
+                        else
+                        {
+                            RenderValue(jsonWriter, prop.Value, options);
+                        }
+                    }
                 }
 
                 jsonWriter.WriteEndObject();
