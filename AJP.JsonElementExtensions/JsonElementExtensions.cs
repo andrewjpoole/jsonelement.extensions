@@ -84,14 +84,16 @@ namespace AJP
         /// If you don't care about preserving the order of the list of properties, or if you care more about performance,
         /// you could use ParseAsJsonStringAndMutate() which is a slightly less expensive operation.
         /// </summary>
-        /// <param name="nameOfPropertytoUpdate"></param>
+        /// <param name="nameOfPropertyToUpdate"></param>
         /// <param name="newValue"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static JsonElement UpdateProperty(this JsonElement jElement, string nameOfPropertytoUpdate, object newValue, JsonSerializerOptions options = null) 
+        public static JsonElement UpdateProperty(this JsonElement jElement, string nameOfPropertyToUpdate, object newValue, JsonSerializerOptions options = null) 
             => jElement.ParseAsJsonStringAndMutatePreservingOrder(props =>
         {
-            var propToUpdate = props.FirstOrDefault(p => p.Name == nameOfPropertytoUpdate);
+            var propToUpdate = props.FirstOrDefault(p => p.Name == nameOfPropertyToUpdate);
+            if (propToUpdate is null)
+                throw new ArgumentException($"Could not find a property named {nameOfPropertyToUpdate} in the list.");
             propToUpdate.Value = newValue;
         }, options ?? new JsonSerializerOptions());
         
