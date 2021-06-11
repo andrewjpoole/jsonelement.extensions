@@ -34,9 +34,8 @@ namespace AJP
 
             jElement = jElement.ParseAsJsonStringAndMutatePreservingOrder(props =>
             {
-                //props.RemoveAll(x => x.Name == "EmailAddress");
-                props.RemoveAt(1);
-                props.Insert(0, ("IsAdmin", true));
+                props.Remove("EmailAddress");
+                props.Insert("IsAdmin", true, 1);
             }, new JsonSerializerOptions());
         }
     }
