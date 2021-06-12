@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29814.53
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AJP.JsonElementExtensions", "AJP.JsonElementExtensions\AJP.JsonElementExtensions.csproj", "{516225B7-5D81-4641-83A2-9010A4C15780}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AJP.JsonElementExtensions.UnitTests", "AJP.JsonElementExtensions.UnitTests\AJP.JsonElementExtensions.UnitTests.csproj", "{AA91B56D-BF4A-4B78-AE82-66AC4D46B9AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AJP.JsonElementExtensions.UnitTests", "AJP.JsonElementExtensions.UnitTests\AJP.JsonElementExtensions.UnitTests.csproj", "{AA91B56D-BF4A-4B78-AE82-66AC4D46B9AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AJP.JsonElementExtensions.Benchmarks", "AJP.JsonElementExtensions.Benchmarks\AJP.JsonElementExtensions.Benchmarks.csproj", "{A32169C1-93DB-4C7D-8F8B-5AE840BB03AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{AA91B56D-BF4A-4B78-AE82-66AC4D46B9AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA91B56D-BF4A-4B78-AE82-66AC4D46B9AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA91B56D-BF4A-4B78-AE82-66AC4D46B9AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A32169C1-93DB-4C7D-8F8B-5AE840BB03AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A32169C1-93DB-4C7D-8F8B-5AE840BB03AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A32169C1-93DB-4C7D-8F8B-5AE840BB03AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A32169C1-93DB-4C7D-8F8B-5AE840BB03AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
