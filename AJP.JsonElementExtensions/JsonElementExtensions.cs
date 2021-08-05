@@ -255,7 +255,7 @@ namespace AJP
         private static void RenderValue(this Utf8JsonWriter writer, object value, JsonSerializerOptions options = null)
         {
             // The value is not a primitive.
-            if (Convert.GetTypeCode(value) == TypeCode.Object && !(value is IEnumerable))
+            if (Convert.GetTypeCode(value) == TypeCode.Object && !(value is IEnumerable) && !(value is JsonElement))
             {
                 writer.WriteStartObject();
                 foreach (var (propName, propValue) in value.GetProperties())
@@ -299,6 +299,14 @@ namespace AJP
                     break;
                 case Guid v:
                     writer.WriteStringValue(v);
+                    break;
+                case JsonElement v:
+                    writer.WriteStartObject();
+                    foreach (var jProp in v.EnumerateObject())
+                    {
+                        jProp.WriteTo(writer);
+                    }
+                    writer.WriteEndObject();
                     break;
                 case IEnumerable<object> arr:
                     writer.WriteStartArray();

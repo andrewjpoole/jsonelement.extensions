@@ -31,7 +31,8 @@ namespace AJP.JsonElementExtensions.UnitTests
 						Name = "Hobbies"
 					}
 				})
-				.AddProperty("nullProperty", null);
+				.AddProperty("nullProperty", null)
+				.AddProperty("jsonElement", GetJsonElement());
 
 			Assert.That(jElement.GetProperty("Age").ToString(), Is.EqualTo("38"));
 			Assert.That(jElement.GetProperty("Male").GetBoolean(), Is.EqualTo(true));
@@ -45,7 +46,8 @@ namespace AJP.JsonElementExtensions.UnitTests
 			Assert.That(jElement.GetProperty("crazyNewObject").EnumerateObject().FirstOrDefault().Value.ToString(), Is.EqualTo("Hobbies"));
 			Assert.That(jElement.GetProperty("nestedObject").GetProperty("Object").GetProperty("Name").GetString(), Is.EqualTo("Hobbies"));
 			Assert.That(jElement.GetProperty("nullProperty").ValueKind, Is.EqualTo(JsonValueKind.Null));
-        }
+			Assert.That(jElement.GetProperty("jsonElement").GetProperty("Name").GetString(), Is.EqualTo("Andrew"));
+		}
 
         [Test]
         public void AddProperty_method_respects_json_options() 
