@@ -301,12 +301,7 @@ namespace AJP
                     writer.WriteStringValue(v);
                     break;
                 case JsonElement v:
-                    writer.WriteStartObject();
-                    foreach (var jProp in v.EnumerateObject())
-                    {
-                        jProp.WriteTo(writer);
-                    }
-                    writer.WriteEndObject();
+                    v.WriteTo(writer);
                     break;
                 case IEnumerable<object> arr:
                     writer.WriteStartArray();
